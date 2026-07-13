@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <title>ATM BCENTRAL - Pantalla de Menú Simplificada</title>
+
+    <style>
+        /*================================================
+          ESTILOS GENERALES Y EXTERIORES (Carcasa)
+        ================================================*/
+        .atm-body {
+            background-color: #0B66C2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Contenedor principal de la pantalla del ATM */
+        .atm-screen-container {
+            width: 800px;
+            height: 500px;
+            background-color: #FFFFFF;
+            border: 10px solid #004A99;
+            box-shadow: 0 8px 24px rgba(0,74,153,0.15);
+            display: grid;
+            grid-template-columns: 80px 1fr 80px;
+            grid-template-rows: 1fr;
+            padding: 10px;
+            /* Z-index bajo para que los botones queden por encima */
+            z-index: 1;
+        }
+
+        /* Área de la pantalla principal (Blanca y degradada) */
+        .atm-display {
+            grid-column: 2 / 3;
+            background: linear-gradient(to bottom, #FFFFFF, #E6F4FF);
+            border: 2px solid rgba(0,74,153,0.08);
+            padding: 30px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            /* Z-index más bajo que los botones laterales */
+            z-index: 5;
+        }
+
+        /* Ocultar elementos */
+        .header-logos, .logo-banco, .logo-clave, .footer-contacto {
+            display: none !important;
+        }
+
+        /*================================================
+          ÁREA CENTRAL (LIMPIA Y CENTRADA)
+        ================================================*/
+        .message-pin-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .atm-instruction {
+            font-size: 1.8em;
+            color: #333;
+            font-weight: 600;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        .field-label, .pin-input-box, .cuenta-input-box, .pin-input, .cuenta-input, .btn-listo, .atm-messages {
+            display: none !important;
+        }
+
+
+        .side-buttons {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            /* CAMBIO CLAVE: Padding ajustado a 0px para maximizar el espacio del margen */
+            padding: 0;
+            position: relative;
+            /* Z-index alto para estar por encima de .atm-display (z-index: 5) */
+            z-index: 10;
+        }
+
+        .side-button-hole {
+            width: 25px;
+            height: 25px;
+
+            border: none;
+            border-radius: 0;
+            background-color: transparent;
+            /* CAMBIO CLAVE: Separación fija de 70px entre los botones */
+            margin-top: 70px;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Eliminar el margen superior del primer botón en cada lado */
+        .side-buttons .side-button-hole:first-child {
+            margin-top: 0;
+        }
+
+        /* Estilo para los links IZQUIERDOS (50px de separación) */
+        .side-button-hole .menu-link-left {
+            position: absolute;
+            left: 50px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #004A99;
+            white-space: nowrap;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        /* Estilo para los links DERECHOS (50px de separación) */
+        .right-buttons .menu-link-right {
+            position: absolute;
+            right: 50px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #004A99;
+            white-space: nowrap;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .right-buttons {
+            grid-column: 3 / 4;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            /* CAMBIO CLAVE: Padding ajustado a 0px */
+            padding: 0;
+            /* Z-index alto */
+            z-index: 10;
+        }
+
+
+
+    </style>
+</h:head>
+
+<h:body styleClass="atm-body">
+    <div class="atm-screen-container">
+
+        <div class="side-buttons">
+            <h:form id="formLeft">
+                <div class="side-button-hole">
+                    <h:commandLink action="consulta_saldo.xhtml?faces-redirect=true" value="Consulta de Saldo" styleClass="menu-link-left"/>
+                </div>
+                <div class="side-button-hole">
+                    <h:commandLink action="movimientos.xhtml?faces-redirect=true"  value="Movimientos" styleClass="menu-link-left"/>
+                </div>
+                <div class="side-button-hole">
+                    <h:commandLink  value="" styleClass="menu-link-left"/>
+                </div>
+                <div class="side-button-hole">
+                    <h:commandLink action="ayuda.xhtml?faces-redirect=true" value="Ayuda" styleClass="menu-link-left"/>
+                </div>
+            </h:form>
+        </div>
+
+        <div class="atm-display">
+            <h:form id="centralForm">
+
+                <div class="message-pin-area">
+                    <h:outputText value="¡Bienvenido!&lt;br/&gt;#{TransaccionesBean.cliente.nombre}" escape="false" styleClass="atm-instruction"/>
+                </div>
+
+            </h:form>
+        </div>
+
+        <div class="side-buttons right-buttons">
+            <h:form id="formRight">
+                <div class="side-button-hole">
+                    <h:commandLink  action="depositar.xhtml?faces-redirect=true"  value="Depositar" styleClass="menu-link-right"/>
+                </div>
+                <div class="side-button-hole">
+                    <h:commandLink action="retirar.xhtml?faces-redirect=true" value="Retirar" styleClass="menu-link-right"/>
+                </div>
+                <div class="side-button-hole">
+                    <h:commandLink  value="" styleClass="menu-link-right"/>
+                </div>
+                <div class="side-button-hole" style="background-color: #FFFFFF; border-color: #004A99;">
+                    <h:commandLink action="#{TransaccionesBean.logout}" value="Finalizar" styleClass="menu-link-right" />
+                </div>
+            </h:form></div>
+    </div>
+</h:body>
+</html>

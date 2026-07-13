@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <title>ATM Moderno - Login (Cuenta/PIN)</title>
+    <style>
+        /*================================================
+          ESTILOS GENERALES Y EXTERIORES (Carcasa)
+        ================================================*/
+        .atm-body {
+            background-color: #0B66C2; /* Fondo azul para toda la página */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Contenedor principal de la pantalla del ATM */
+        .atm-screen-container {
+            width: 800px;
+            height: 500px;
+            background-color: #FFFFFF; /* pantalla interior en blanco */
+            border: 10px solid #004A99; /* borde azul */
+            box-shadow: 0 8px 24px rgba(0,74,153,0.15);
+            display: grid;
+            grid-template-columns: 80px 1fr 80px;
+            grid-template-rows: 1fr;
+            padding: 10px;
+        }
+
+        /* Área de la pantalla principal (Blanca y degradada) */
+        .atm-display {
+            grid-column: 2 / 3;
+            background: linear-gradient(to bottom, #FFFFFF, #E6F4FF);
+            border: 2px solid rgba(0,74,153,0.08);
+            padding: 30px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /*================================================
+          HEADER Y FOOTER (Logos y Contacto)
+        ================================================*/
+        .header-logos {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .logo-banco {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #004A99;
+        }
+
+        .logo-clave {
+            background-color: #004A99; /* cambiar rojo por azul */
+            color: white;
+            font-size: 1.1em;
+            padding: 5px 10px;
+            font-weight: bold;
+            border-radius: 3px;
+        }
+
+        .footer-contacto {
+            font-size: 0.8em;
+            color: #555;
+            margin-top: 20px;
+        }
+
+        /*================================================
+          ÁREA CENTRAL: INGRESO CUENTA Y PIN
+        ================================================*/
+        .message-pin-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .atm-instruction {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+        /* Estilo para las etiquetas de los campos */
+        .field-label {
+            font-size: 1.1em;
+            color: #333;
+            margin-bottom: 5px;
+            display: block;
+            text-align: left;
+            width: 300px;
+            font-weight: 500;
+        }
+
+        /* Contenedor del campo PIN (Estilo destacado con flecha) */
+        .pin-input-box {
+            background-color: #004A99;
+            color: white;
+            padding: 15px 40px;
+            border-radius: 5px;
+            width: 300px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        /* Contenedor del campo CUENTA (Estilo más simple) */
+        .cuenta-input-box {
+            /* Estilo neutro, caja en blanco con borde azul claro */
+            background-color: #FFFFFF;
+            border: 1px solid rgba(0,74,153,0.12);
+            padding: 10px 15px;
+            border-radius: 5px;
+            width: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .pin-input, .cuenta-input {
+            background: none;
+            border: none;
+            color: #333; /* Texto oscuro para el input de cuenta */
+            font-size: 1.6em; /* Un poco más pequeño que el PIN */
+            width: 100%;
+            text-align: center;
+            letter-spacing: 2px;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* El PIN debe tener color blanco, sobrescribimos la regla genérica anterior */
+        .pin-input {
+            color: white;
+            font-size: 2em;
+            letter-spacing: 5px;
+            width: 150px;
+        }
+
+        /* Simulación de los XXXX */
+        .pin-placeholder {
+            font-size: 2em;
+            color: white;
+            font-weight: bold;
+            letter-spacing: 5px;
+        }
+
+        /* Flecha decorativa (solo para el PIN) */
+        .pin-input-box::after {
+            content: '';
+            border-top: 20px solid transparent;
+            border-bottom: 20px solid transparent;
+            border-left: 20px solid #004A99;
+            position: absolute;
+            right: 0px;
+            transform: translateX(100%);
+        }
+
+        /* Botón Listo (gráfico) */
+        .btn-listo {
+            background-color: #004A99;
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.5em;
+            font-weight: bold;
+            cursor: pointer;
+            width: 300px;
+            transition: background-color 0.2s;
+        }
+
+        .btn-listo:hover {
+            background-color: #0066CC;
+        }
+
+        /* Mensajes de error */
+        .atm-messages {
+            color: red;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        /*================================================
+          SIMULACIÓN DE BOTONES LATERALES
+        ================================================*/
+        .side-buttons {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+            padding: 30px 0;
+        }
+
+        .side-button-hole {
+            width: 25px;
+            height: 25px;
+            /* Eliminado estilo circular: quitar borde y radio para borrar círculos */
+            border: none;
+            border-radius: 0;
+            background-color: transparent;
+            margin: 15px 0;
+        }
+
+        .right-buttons {
+            grid-column: 3 / 4;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+            padding: 30px 0;
+        }
+    </style>
+</h:head>
+
+<h:body styleClass="atm-body">
+    <div class="atm-screen-container">
+
+        <div class="side-buttons">
+            <div class="side-button-hole"></div>
+            <div class="side-button-hole"></div>
+            <div class="side-button-hole"></div>
+            <div class="side-button-hole"></div>
+        </div>
+
+        <div class="atm-display">
+            <h:form id="loginModernoForm">
+
+                <div class="header-logos">
+                    <span class="logo-banco">BANCO CENTRAL DE HONDURAS</span>
+                    <span class="logo-clave">BIENVENIDO A TU BANCA EN LINEA</span>
+                </div>
+
+                <div class="message-pin-area">
+                    <h:outputText value="#{loginModernoBean.mensajeInstruccion}" styleClass="atm-instruction"/>
+
+
+                    <h:outputText value="INGRESE NÚMERO DE CUENTA:" styleClass="field-label"/>
+                    <h:panelGroup layout="block" styleClass="cuenta-input-box">
+                        <h:inputText value="#{TransaccionesBean.numeroCuenta}" styleClass="cuenta-input"
+                                     type="number"
+                                     inputmode="numeric"
+                                     pattern="[0-9]*([.,][0-9]{1,2})?"
+                                     maxlength="12" size="12" placeholder="Ej. 0000000000"/>
+                    </h:panelGroup>
+
+
+                    <h:outputText value="INGRESE SU PIN SECRETO:" styleClass="field-label"/>
+                    <h:panelGroup layout="block" styleClass="pin-input-box">
+                        <h:outputText value="XXXX" styleClass="pin-placeholder"/>
+                        <h:inputSecret value="#{TransaccionesBean.pin}" styleClass="pin-input"
+                                       type="number"
+                                       inputmode="numeric"
+                                       pattern="[0-9]*([.,][0-9]{1,2})?"
+                                       maxlength="4" size="4"/>
+                    </h:panelGroup>
+
+                    <h:commandButton value="Listo" action="#{TransaccionesBean.checklogin}" update="globalMessages"
+                                     styleClass="btn-listo"/>
+
+                    <h:messages globalOnly="true" styleClass="atm-messages"/>
+                </div>
+
+
+            </h:form>
+        </div>
+
+        <div class="side-buttons right-buttons">
+            <div class="side-button-hole"></div>
+            <div class="side-button-hole"></div>
+            <div class="side-button-hole"></div>
+            <div class="side-button-hole" style="background-color: #FFFFFF; border-color: #004A99;"></div>
+        </div>
+    </div>
+</h:body>
+</html>
